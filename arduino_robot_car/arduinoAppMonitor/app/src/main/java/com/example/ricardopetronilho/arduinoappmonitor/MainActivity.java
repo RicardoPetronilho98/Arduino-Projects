@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             public void onRead(int size) {
                 byte[] buf = new byte[size];
                 mPhysicaloid.read(buf, size);
-                textAppend(Html.fromHtml("<font color=blue>" + new String(buf) + "</font>"));
+                setText(Html.fromHtml("<font color=blue>" + new String(buf) + "</font>"));
             }
         });
 
@@ -179,59 +179,34 @@ public class MainActivity extends AppCompatActivity {
     public void moveF() { 	// move foward
 
         String str = "f";
-
-        if(str.length()>0) {
-
-            byte[] buf = str.getBytes();	//convert string to byte array
-            mPhysicaloid.write(buf, buf.length);	//write data to arduino
-        }
+        writeData(str);
     }
 
 
     public void moveB() { 	// move back
 
         String str = "b";
-
-        if(str.length()>0) {
-
-            byte[] buf = str.getBytes();	//convert string to byte array
-            mPhysicaloid.write(buf, buf.length);	//write data to arduino
-        }
+        writeData(str);
     }
 
 
     public void moveR() { 	// move right
 
         String str = "r";
-
-        if(str.length()>0) {
-
-            byte[] buf = str.getBytes();	//convert string to byte array
-            mPhysicaloid.write(buf, buf.length);	//write data to arduino
-        }
+        writeData(str);
     }
 
 
     public void moveL() { 	// move left
 
         String str = "l";
-
-        if(str.length()>0) {
-
-            byte[] buf = str.getBytes();	//convert string to byte array
-            mPhysicaloid.write(buf, buf.length);	//write data to arduino
-        }
+        writeData(str);
     }
 
-    public void moveStop() { 	// stop
+    public void moveStop() { 	// stop the car
 
         String str = "s";
-
-        if(str.length()>0) {
-
-            byte[] buf = str.getBytes();	//convert string to byte array
-            mPhysicaloid.write(buf, buf.length);	//write data to arduino
-        }
+        writeData(str);
     }
 
     public void ledOnOff(View v) { 	// turn led on/ off
@@ -240,12 +215,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(led == 0) {
             str = "z";
-            led = 1;
+            led = 1;  //liga o led
         }
         else {
 
             str = "x";
-            led = 0;
+            led = 0;   //desliga o led
         }
 
         if(str.length()>0) {
@@ -257,7 +232,18 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void textAppend(CharSequence text) { //escreve os dados lidos do arduino no textView
+    public void writeData(String str){
+
+        if(str.length() > 0) {
+
+            byte[] buf = str.getBytes();	//convert string to byte array
+            mPhysicaloid.write(buf, buf.length);	//write data to arduino
+        }
+    }
+
+
+
+    private void setText(CharSequence text) { //escreve os dados lidos do arduino no textView
 
         final CharSequence ftext = text;
         mHandler.post(new Runnable() {
