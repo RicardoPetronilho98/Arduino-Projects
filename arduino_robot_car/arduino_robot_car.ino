@@ -3,12 +3,18 @@ const int trigPin = A2;
 const int echoPin = A3;
 long duration;
 int distance;
+unsigned long interval1 = 2;
+boolean A_1 = false;
+unsigned long interval2 = 10;
+boolean A_2 = false;
 
 // defines pins numbers
 const int trigPin2 = A5;
 const int echoPin2 = A4;
 long duration2;
 int distance2;
+boolean B_1 = false;
+boolean B_2 = false;
 
 int izqA = 5;
 int izqB = 6;
@@ -35,31 +41,54 @@ void setup() {
   pinMode(echoPin2, INPUT); // Sets the echoPin as an Input
 }
 
+unsigned long previousMicros;
+unsigned long currentMicros;
+unsigned long temporaldistance;
+
+
 void loop() {
 
-  //currentMicros = micros();
+  currentMicros = micros();
+  temporaldistance = currentMicros - previousMicros;
+  
+  if ( temporaldistance >= interval1 || temporaldistance >= interval2 ){ // 2 microseconds || 10 microseconds
 
+    if (temporaldistance >= interval1) A_1 = B_1 = true;
+    if (temporaldistance >= interval2) A_2 = B_2 = true;
+    
+    previousMicros = currentMicros;
+  }
+  
   if (Serial.available() > 0) estado = Serial.read();
 
   atualizaEstado();
 
-  //atualizaDistancia();
-  //atualizaDistancia2();
+  atualizaDistancia();
+  atualizaDistancia2();
 }
+
 
 void atualizaDistancia() {
 
   // Clears the trigPin
   digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
+  
+  if ( A_1 ){
 
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+    A_1 = false;
 
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH);
+    // Sets the trigPin on HIGH state for 10 micro seconds
+    digitalWrite(trigPin, HIGH);
+
+    if ( A_2 ){
+
+      A_2 = false;
+      
+      digitalWrite(trigPin, LOW);
+      // Reads the echoPin, returns the sound wave travel time in microseconds
+      duration = pulseIn(echoPin, HIGH);
+    }
+  }
 
   // Calculating the distance
   distance = duration * 0.034 / 2;
@@ -76,15 +105,24 @@ void atualizaDistancia2() {
 
   // Clears the trigPin
   digitalWrite(trigPin2, LOW);
-  delayMicroseconds(2);
+  
+  if ( B_1 ){
 
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin2, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin2, LOW);
+    B_1 = false;
 
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration2 = pulseIn(echoPin2, HIGH);
+    // Sets the trigPin on HIGH state for 10 micro seconds
+    digitalWrite(trigPin2, HIGH);
+    
+    
+      if ( B_2 ){
+
+        B_2 = false;
+        
+        digitalWrite(trigPin2, LOW);
+        // Reads the echoPin, returns the sound wave travel time in microseconds
+        duration2 = pulseIn(echoPin2, HIGH);
+      }
+  }
 
   // Calculating the distance
   distance2 = duration2 * 0.034 / 2;
